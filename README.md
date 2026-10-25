@@ -1,94 +1,103 @@
-# TradeIN — Indian Markets Dashboard
+# Trade-In — Indian Markets Dashboard
 
-A React + Vite single-page app that shows live-simulated crypto and forex
-prices for the Indian market, a TradingView chart/screener, a demo
-"Portfolio Access" login, and a per-asset detail view with fundamentals,
-order book and P&L.
+A modern, high-performance financial dashboard web application built with **React**, **Vite**, **Redux Toolkit**, and **Google Gemini AI**. Designed for tracking Indian financial markets in real time, featuring live ticker updates, portfolio analytics, asset fundamentals, order book simulations, and an intelligent financial co-pilot assistant.
 
-Built for **BECSE (AIFT) Batch 2025, 3rd Semester — Front End
-Engineering-II (25CSE0203), Project-Based Evaluation-I**.
+---
 
-## Getting started
+## 🌟 Key Features
 
+- **Live Market Dashboard**: Real-time simulated price tracking for Indian market assets, Crypto (BTC/INR, ETH/INR), and Forex currency pairs.
+- **Ask Trade-In AI Assistant**: An AI-powered interactive financial advisor powered by Google Gemini, offering instant insights into Indian market trends, tax concepts (STCG vs LTCG), portfolio diversification, and risk analysis.
+- **Portfolio Management**: Secure demo authentication for investor accounts (`TRADER001`, `TRADER002`, `TRADER003`) with interactive asset allocation breakdowns, profit/loss calculations, and transaction histories.
+- **Deep Asset Analytics**: Individual asset drill-downs featuring interactive charting, live order book depths, key financial metrics, and company fundamentals.
+- **Ultra-Responsive Dark UI**: Designed with custom typography (Syne & JetBrains Mono), neon accents, glassmorphic styling, and full accessibility compliance (WCAG standards with skip links and ARIA labels).
+
+---
+
+## 🚀 Tech Stack
+
+- **Frontend**: React 18, Vite 5
+- **State Management**: Redux Toolkit & React-Redux
+- **Routing**: React Router DOM v6
+- **Forms & Validation**: Formik & Yup
+- **Icons**: Lucide React
+- **AI Integration**: Google Gemini API via REST
+- **Styling**: Vanilla CSS3 design system with CSS custom properties
+
+---
+
+## 🛠️ Getting Started
+
+### 1. Clone the repository
+```bash
+git clone https://github.com/heavenpreet8542beaift25-sketch/Trade-In.git
+cd Trade-In
+```
+
+### 2. Install dependencies
 ```bash
 npm install
-npm run dev       # starts the Vite dev server at http://localhost:5173
-npm run build      # production build into /dist
-npm run preview    # preview the production build locally
 ```
 
-Demo portfolio logins: `TRADER001`, `TRADER002`, `TRADER003` (shown on the
-Portfolio Access screen).
-
-## Folder structure
-
-```
-tradein-dashboard/
-├── index.html                  # Vite HTML entry, loads /src/main.jsx
-├── package.json
-├── vite.config.js
-├── src/
-│   ├── main.jsx                 # React root render
-│   ├── App.jsx                  # Page routing state (dashboard/portfolio/detail)
-│   ├── index.css                # Global design tokens + component styles
-│   ├── data/                    # Static data modules (no logic)
-│   │   ├── markets.js           # Crypto/forex instrument list
-│   │   ├── meta.js              # Per-asset fundamentals for the detail page
-│   │   ├── accounts.js          # Demo login accounts + demo portfolio
-│   │   └── news.js              # News feed content
-│   ├── hooks/                   # Reusable stateful logic (useState/useEffect)
-│   │   ├── useLivePrices.js     # Simulated live price ticker
-│   │   └── useClock.js          # IST clock for the navbar
-│   ├── utils/
-│   │   ├── format.js            # INR currency formatting helpers
-│   │   └── orderBook.js         # Synthetic order-book generator
-│   └── components/
-│       ├── layout/               # Navbar, TickerTape, Footer
-│       ├── dashboard/             # Hero, charts, market lists, screener, news
-│       ├── portfolio/             # Login, summary bar, invest cards, transactions
-│       └── detail/                # Asset detail page
-```
-
-## How this maps to the evaluation rubric
-
-- **HTML structure & CSS styling** — semantic elements (`nav`, `main`,
-  `header`, `footer`, `dl`/`dt`/`dd`, `table`), ARIA roles/labels and a
-  skip link are used throughout the JSX; all styling lives in one
-  organized, commented `index.css` using CSS custom properties.
-- **JavaScript & folder structure** — logic is split by responsibility
-  (data / hooks / utils / components), each file has a single job, and
-  naming is consistent (`camelCase` functions, `PascalCase` components).
-- **DOM manipulation** — `AllocationPieChart` draws directly on a
-  `<canvas>` via `useRef` + `getContext('2d')`, and the TradingView
-  widgets (`TickerTape`, `HotLists`, `Screener`) attach third-party
-  `<script>` tags to a ref'd container node with proper cleanup.
-- **React basics** — every UI piece is a functional component; state is
-  managed with `useState` (page routing, login, chart symbol, screener
-  tab, menu open/closed) and side effects with `useEffect` (price
-  simulation, clock tick, chart/script loading); data flows down via
-  **props** (e.g. `prices`, `holdings`, `onOpenDetail`).
-
-## Git / GitHub workflow
-
-This repository is meant to be pushed to GitHub and updated regularly,
-per the evaluation notes:
-
+### 3. Configure Environment Variables
+Copy `.env.example` to `.env` and provide your Google Gemini API key:
 ```bash
-git init
-git add .
-git commit -m "chore: scaffold TradeIN dashboard"
-git branch -M main
-git remote add origin <your-repo-url>
-git push -u origin main
+cp .env.example .env
+```
+Add your key:
+```env
+VITE_GEMINI_API_KEY=your_gemini_api_key_here
 ```
 
-Suggested commit cadence while building features: one commit per
-component or hook (e.g. `feat: add live price hook`,
-`feat: add asset detail page`, `style: polish order book card`) so the
-commit history shows real progress for the "GitHub commit practices"
-criterion.
+### 4. Run the development server
+```bash
+npm run dev
+```
 
-## Notes
+### 5. Build for production
+```bash
+npm run build
+npm run preview
+```
 
-All prices are simulated client-side for demo purposes — this is not
-financial advice, and no real trading happens anywhere in the app.
+---
+
+## 🔐 Demo Accounts
+
+To test the portfolio features, enter one of the demo account IDs on the **Portfolio Access** login page:
+- `TRADER001` — Aggressive Tech & Crypto Portfolio
+- `TRADER002` — Balanced Bluechip & Index Portfolio
+- `TRADER003` — Conservative Debt & Gold Portfolio
+
+---
+
+## 📂 Project Architecture
+
+```
+Trade-In/
+├── public/
+├── src/
+│   ├── components/
+│   │   ├── common/         # AskTradeInAI co-pilot assistant
+│   │   ├── forms/          # Formik + Yup Portfolio Access LoginForm
+│   │   └── portfolio/      # InvestmentCards and holding summaries
+│   ├── context/            # AuthContext (session state management)
+│   ├── pages/              # DashboardPage, PortfolioPage, AssetDetailPage
+│   ├── routes/             # AppRoutes and ProtectedRoute wrapper
+│   ├── store/              # Redux store & slices (marketSlice, portfolioSlice)
+│   ├── styles/             # Global CSS design tokens and layout styling
+│   ├── utils/              # Currency (INR) and date formatters
+│   ├── App.jsx             # Top-level shell with navigation and footer
+│   └── main.jsx            # Application entry point
+├── .env.example
+├── .gitignore
+├── index.html
+├── package.json
+└── vite.config.js
+```
+
+---
+
+## 📜 Academic Project Notice
+
+Developed for **Chitkara University — Front End Engineering-II (FEE-2)** evaluation. Simulated data is intended strictly for educational and demonstration purposes.

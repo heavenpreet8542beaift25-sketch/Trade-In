@@ -1,70 +1,67 @@
-import { useState } from 'react';
-import Navbar from './components/layout/Navbar.jsx';
-import TickerTape from './components/layout/TickerTape.jsx';
-import Dashboard from './components/dashboard/Dashboard.jsx';
-import Portfolio from './components/portfolio/Portfolio.jsx';
-import AssetDetail from './components/detail/AssetDetail.jsx';
-import { useLivePrices } from './hooks/useLivePrices.js';
+import React, { useEffect } from 'react';
+import { BrowserRouter as Router, Link } from 'react-router-dom';
+import { Provider, useDispatch } from 'react-redux';
+import { store } from './store/store';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import { AppRoutes } from './routes/AppRoutes';
+import { AskTradeInAI } from './components/common/AskTradeInAI'; // <-- IMPORTED HERE
+import { updateLivePrices } from './store/slices/marketSlice';
+import './styles/index.css';
 
-export default function App() {
-  const prices = useLivePrices();
+const MainLayout = () => {
+  const dispatch = useDispatch();
+  const { isAuthenticated, logout } = useAuth();
 
-  const [page, setPage] = useState('dashboard');
-  const [lastPage, setLastPage] = useState('dashboard');
-  const [account, setAccount] = useState(null);
-  const [detail, setDetail] = useState({ assetId: null, account: null });
-
-  const navigate = (target) => {
-    setPage(target);
-    setLastPage(target);
-  };
-
-  const openDetail = (assetId, detailAccount) => {
-    setDetail({ assetId, account: detailAccount });
-    setPage('detail');
-  };
-
-  const backFromDetail = () => setPage(lastPage);
-
-  const handleLogin = (accountId) => setAccount(accountId);
-  const handleLogout = () => {
-    setAccount(null);
-    navigate('portfolio');
-  };
+  useEffect(() => {
+    const interval = setInterval(() => {
+      dispatch(updateLivePrices());
+    }, 1200);
+    return () => clearInterval(interval);
+  }, [dispatch]);
 
   return (
-    <>
+    <div>
       <a className="skip-link" href="#main-content">Skip to main content</a>
-      <TickerTape />
-      <Navbar page={page} isLoggedIn={Boolean(account)} onNavigate={navigate} onLogout={handleLogout} />
+      <nav role="navigation" aria-label="Main navigation">
+        <Link className="nav-logo" to="/">Trade-<span>In</span><em>•</em></Link>
+        <ul className="nav-links">
+          <li><Link to="/">Dashboard</Link></li>
+          <li><Link to="/portfolio">Portfolio</Link></li>
+        </ul>
+        <div className="nav-right">
+          {isAuthenticated ? (
+            <button className="btn-outline" onClick={logout}>← Logout</button>
+          ) : (
+            <Link to="/login" className="btn-primary">Login →</Link>
+          )}
+        </div>
+      </nav>
 
       <main id="main-content">
-        {page === 'dashboard' && (
-          <Dashboard
-            prices={prices}
-            onOpenDetail={openDetail}
-            onGoToPortfolio={() => navigate('portfolio')}
-          />
-        )}
-
-        {page === 'portfolio' && (
-          <Portfolio
-            account={account}
-            prices={prices}
-            onLogin={handleLogin}
-            onOpenDetail={openDetail}
-          />
-        )}
-
-        {page === 'detail' && (
-          <AssetDetail
-            assetId={detail.assetId}
-            account={detail.account}
-            prices={prices}
-            onBack={backFromDetail}
-          />
-        )}
+        <AppRoutes />
       </main>
-    </>
+
+      {/* ASK TRADE-IN AI FLOATING ASSISTANT */}
+      <AskTradeInAI />
+
+      <footer>
+        <div className="footer-brand">Trade-<span>In</span>•</div>
+        <p className="footer-note">Simulated data for educational purposes. © 2026 Trade-In — Chitkara University Project</p>
+      </footer>
+    </div>
   );
-}
+};
+
+export const App = () => {
+  return (
+    <Provider store={store}>
+      <AuthProvider>
+        <Router>
+          <MainLayout />
+        </Router>
+      </AuthProvider>
+    </Provider>
+  );
+};
+
+export default App;
